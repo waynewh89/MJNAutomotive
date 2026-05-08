@@ -53,9 +53,9 @@ app.post('/api/contact', async (req, res) => {
     from: `"MJN Automotive Website" <${process.env.SMTP_USER || 'mjnautomotive@hotmail.com'}>`,
     to: 'mjnautomotive@hotmail.com',
     replyTo: email.trim(),
-    subject: `New Service Enquiry — ${safe(name)}`,
+    subject: `New Service Request - ${safe(name)}`,
     text: [
-      'New enquiry from the MJN Automotive website',
+      'New service request from the MJN Automotive website',
       '',
       `Name:    ${safe(name)}`,
       `Phone:   ${safe(phone)}`,
@@ -68,7 +68,7 @@ app.post('/api/contact', async (req, res) => {
     html: `
       <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto">
         <h2 style="background:#EF1D2A;color:#fff;padding:16px 24px;margin:0;border-radius:8px 8px 0 0">
-          New Service Enquiry — MJN Automotive
+          New Service Request - MJN Automotive
         </h2>
         <div style="border:1px solid #e5e7eb;border-top:none;border-radius:0 0 8px 8px;padding:24px">
           <table style="width:100%;border-collapse:collapse">
@@ -82,7 +82,7 @@ app.post('/api/contact', async (req, res) => {
           <p style="white-space:pre-wrap;margin:0">${safe(message)}</p>
         </div>
         <p style="color:#9ca3af;font-size:12px;margin-top:16px;text-align:center">
-          Sent from mjnautomotive.com.au
+          Sent from mjnautomotive.au
         </p>
       </div>
     `,
