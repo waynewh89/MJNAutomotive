@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { type ChangeEvent, type FormEvent, useEffect, useState } from 'react';
 import {
   Award,
   Battery,
@@ -63,7 +63,7 @@ const trustItems = [
   {
     icon: Clock,
     title: 'Monday to Friday',
-    text: 'Open 8am–5pm. Easy phone booking, no online forms needed.',
+    text: 'Open 8am-5pm. Call the workshop or send a service request online.',
     accent: 'text-[#EF1D2A]',
   },
 ];
@@ -148,7 +148,7 @@ const reviews = [
   {
     name: 'Brett L.',
     location: 'South Nowra',
-    text: 'Professional from booking to pickup. The team explained exactly what was needed, no surprises on the bill. Will definitely be back.',
+    text: 'Professional from first call to pickup. The team explained exactly what was needed, no surprises on the bill. Will definitely be back.',
     stars: 5,
   },
   {
@@ -162,49 +162,44 @@ const reviews = [
 /* ─── FAQs ───────────────────────────────────────────── */
 const faqs = [
   {
-    category: 'Booking & Servicing',
-    q: 'How do I book a service?',
-    a: "The easiest way is to call us directly on 02 4421 6090. You can also send a message through the contact form on this page and we'll get back to you promptly.",
+    category: 'Service Requests',
+    q: 'Can I request a service online?',
+    a: 'Yes. You can send a service request through the website and MJN Automotive will contact you to confirm availability, timing and any required details. Online requests are not confirmed bookings until the workshop confirms the appointment.',
   },
   {
-    category: 'Booking & Servicing',
-    q: 'What types of vehicles do you service?',
-    a: 'We service all makes and models including passenger cars, SUVs, utes, 4x4s, vans, and light commercial vehicles. Japanese, European, Korean, and Australian brands all welcome.',
+    category: 'Servicing & Repairs',
+    q: 'Do you provide logbook servicing in South Nowra?',
+    a: 'Yes. MJN Automotive provides logbook servicing for many makes and models. The workshop can follow the required service schedule and advise what is due before work begins.',
   },
   {
-    category: 'Booking & Servicing',
-    q: 'How long does a standard service take?',
-    a: "A standard logbook or minor service typically takes 1.5 to 2.5 hours. Major services or those requiring additional repairs may take longer. We'll give you a clear timeframe before starting.",
+    category: 'Servicing & Repairs',
+    q: 'Can an independent mechanic service my car without affecting warranty?',
+    a: 'In many cases, a qualified independent mechanic can complete scheduled servicing using suitable parts and procedures. If your vehicle is under warranty, MJN Automotive can discuss the service requirements before proceeding.',
   },
   {
-    category: 'Logbook Servicing',
-    q: 'What is logbook servicing?',
-    a: "Logbook servicing means we follow the manufacturer's service schedule as outlined in your vehicle's logbook. We use quality parts and stamp your logbook, helping to preserve your new car warranty.",
+    category: 'Diagnostics & Safety',
+    q: 'What are signs my brakes need attention?',
+    a: 'Common signs include squealing, grinding, vibration when braking, a soft brake pedal, the vehicle pulling to one side, or a brake warning light. If you notice these symptoms, the vehicle should be inspected before the issue worsens.',
   },
   {
-    category: 'Logbook Servicing',
-    q: 'Will logbook servicing at MJN affect my new car warranty?',
-    a: "No. Under Australian consumer law, you are entitled to have your vehicle serviced at any qualified workshop without voiding your manufacturer's warranty, provided the service is carried out to manufacturer specifications. We use quality parts and follow the correct intervals.",
+    category: 'Diagnostics & Safety',
+    q: 'Do you diagnose warning lights and fault codes?',
+    a: 'Yes. MJN Automotive can inspect warning lights, scan for fault codes and carry out further fault finding where required. A scan code is only a starting point, so the workshop may need to test related components before recommending repairs.',
   },
   {
-    category: 'Registration & Inspections',
-    q: 'What is a pink slip / rego check?',
-    a: 'A pink slip (also called an e-Safety Check) is a vehicle safety inspection required to renew registration for vehicles more than five years old in NSW. We inspect brakes, tyres, lights, steering, and other safety systems. Results are submitted electronically to Service NSW.',
+    category: 'Local Workshop',
+    q: 'Do you service customers outside South Nowra?',
+    a: 'Yes. MJN Automotive is based in South Nowra and also helps customers from Nowra, Bomaderry, Worrigee, West Nowra, North Nowra and the wider Shoalhaven area.',
   },
   {
-    category: 'Registration & Inspections',
-    q: 'What does a pre-purchase inspection cover?',
-    a: "Our pre-purchase inspections give you a clear mechanical report on a used vehicle before you buy. We check the engine, brakes, suspension, tyres, fluids, bodywork condition, and more — so you know exactly what you're getting into.",
+    category: 'Servicing & Repairs',
+    q: 'Will you contact me before doing extra repair work?',
+    a: 'Yes. If additional work is identified, MJN Automotive will explain the issue and seek approval before carrying out extra repairs.',
   },
   {
-    category: 'General',
-    q: 'Do you offer a warranty on repairs?',
-    a: "Yes. We stand behind our work. Warranty periods vary by repair type and parts used — ask us when you book and we'll be upfront about what's covered.",
-  },
-  {
-    category: 'General',
-    q: 'What areas do you service?',
-    a: 'Our workshop is located in South Nowra and we primarily serve the Shoalhaven area including Nowra, South Nowra, Bomaderry, Vincentia, Culburra Beach, and surrounding suburbs.',
+    category: 'Service Requests',
+    q: 'What information should I include in a service request?',
+    a: 'Include your name, contact details, vehicle make and model, registration if available, the issue or service required, and preferred timing. This helps the workshop respond with the right information.',
   },
 ];
 
@@ -213,8 +208,10 @@ function Logo() {
   return (
     <a href="#home" className="flex items-center interactive-lift">
       <img
-        src="/images/mjn-logo.png"
+        src="/images/mjn-automotive-logo.webp"
         alt="MJN Automotive"
+        width={420}
+        height={210}
         className="h-12 w-auto object-contain"
       />
     </a>
@@ -254,16 +251,29 @@ function ImageCard({
   src,
   alt,
   label,
+  width = 1200,
+  height = 800,
+  loading = 'lazy',
+  fetchPriority,
 }: {
   src: string;
   alt: string;
   label?: string;
+  width?: number;
+  height?: number;
+  loading?: 'eager' | 'lazy';
+  fetchPriority?: 'high' | 'low' | 'auto';
 }) {
   return (
     <div className="group relative min-h-[360px] overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl shadow-black/50 image-card-lift">
       <img
         src={src}
         alt={alt}
+        width={width}
+        height={height}
+        loading={loading}
+        decoding="async"
+        fetchPriority={fetchPriority}
         className="absolute inset-0 h-full w-full object-cover grayscale transition duration-700 group-hover:scale-105"
       />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(8,10,14,0.25)_35%,rgba(8,10,14,0.95)_100%)]" />
@@ -335,13 +345,13 @@ function ContactForm() {
     return e;
   }
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+  function handleChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const { name, value } = e.target;
     setFields((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) setErrors((prev) => { const n = { ...prev }; delete n[name]; return n; });
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
@@ -382,16 +392,16 @@ function ContactForm() {
           <CheckCircle2 size={32} className="text-[#FFCC1B]" />
         </div>
         <div>
-          <h3 className="text-xl font-black text-white">Enquiry Sent!</h3>
+          <h3 className="text-xl font-black text-white">Request Sent!</h3>
           <p className="mt-2 text-slate-400">
-            Thanks for getting in touch. We'll get back to you shortly.
+            Your request has been sent. MJN Automotive will contact you to confirm availability.
           </p>
         </div>
         <button
           onClick={() => setStatus('idle')}
           className="btn-base btn-outline px-6 py-3 text-sm"
         >
-          Send another enquiry
+          Send another request
         </button>
       </div>
     );
@@ -483,9 +493,13 @@ function ContactForm() {
         disabled={status === 'submitting'}
         className="btn-base btn-red mt-4 w-full rounded-lg px-8 py-4 text-sm uppercase tracking-[0.18em] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0 disabled:active:scale-100"
       >
-        {status === 'submitting' ? 'Sending…' : 'Send Enquiry'}
+        {status === 'submitting' ? 'Sending...' : 'Send Service Request'}
         {status !== 'submitting' && <ChevronRight size={18} />}
       </button>
+
+      <p className="mt-3 text-xs leading-6 text-slate-500">
+        Submitting this form sends a service request only. Your booking is not confirmed until MJN Automotive contacts you and confirms a suitable time.
+      </p>
 
       <div className="mt-5 flex flex-wrap gap-2">
         {['Fast response', 'Transparent quoting', 'Local workshop support'].map((label) => (
@@ -502,7 +516,7 @@ function ContactForm() {
       {/* Icon stat strip */}
       <div className="mt-6 grid grid-cols-3 gap-3 border-t border-white/10 pt-6">
         {[
-          { icon: Phone, label: 'Phone-first booking', sub: 'Call for faster service' },
+          { icon: Phone, label: 'Phone-first service', sub: 'Call for faster service' },
           { icon: Clock, label: 'Mon–Fri 8am–5pm', sub: 'Closed weekends' },
           { icon: Shield, label: 'Licensed Repairer', sub: 'All makes & models' },
         ].map(({ icon: Icon, label, sub }) => (
@@ -567,7 +581,7 @@ export default function App() {
               href={`tel:${phoneRaw}`}
               className="btn-base btn-yellow px-5 py-2.5 text-sm"
             >
-              Call Now
+              Call Workshop
             </a>
           </div>
 
@@ -625,8 +639,12 @@ export default function App() {
           <div className="absolute inset-0 bg-[#070A0F]" />
           <div className="absolute right-0 top-0 h-full w-[58%]">
             <img
-              src="/images/shop-front.png"
-              alt="MJN Automotive workshop"
+              src="/images/mjn-automotive-south-nowra-workshop-hero.webp"
+              alt="MJN Automotive workshop in South Nowra"
+              width={1400}
+              height={1050}
+              fetchPriority="high"
+              decoding="async"
               className="h-full w-full object-cover grayscale opacity-40"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-[#070A0F] via-[#070A0F]/55 to-[#070A0F]/10" />
@@ -793,9 +811,11 @@ export default function App() {
         <section id="expertise" className="bg-[#080C12] px-6 py-24 md:py-32">
           <div className="mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-2">
             <ImageCard
-              src="images/workshop-wide.png"
-              alt="MJN Automotive workshop interior"
+              src="/images/mjn-automotive-south-nowra-workshop.webp"
+              alt="MJN Automotive workshop in South Nowra"
               label="South Nowra Workshop"
+              width={1200}
+              height={675}
             />
 
             <div>
@@ -828,13 +848,13 @@ export default function App() {
                   className="btn-base btn-yellow px-6 py-3 text-sm"
                 >
                   <Phone size={16} />
-                  Call Us Now
+                  Call the Workshop
                 </a>
                 <a
                   href="#contact"
                   className="btn-base btn-outline px-6 py-3 text-sm"
                 >
-                  Send Enquiry
+                  Send Service Request
                   <ChevronRight size={16} />
                 </a>
               </div>
@@ -854,7 +874,7 @@ export default function App() {
 
             <div className="mt-14 grid gap-5 md:grid-cols-4">
               {[
-                ['01', 'Call or Enquire', 'Phone us on 02 4421 6090 or send a message through the contact form.'],
+                ['01', 'Call or Send a Request', 'Phone us on 02 4421 6090 or send a service request through the contact form.'],
                 ['02', 'Inspect & Diagnose', 'We assess the vehicle thoroughly and identify the issue.'],
                 ["03", "Explain the Work", "We tell you exactly what's needed and the cost — before we start."],
                 ["04", "Complete the Repair", "Quality work, quality parts, and you're back on the road."],
@@ -970,7 +990,9 @@ export default function App() {
 
             <div className="mt-14 space-y-2">
               {faqs.map((faq, i) => (
-                <FAQItem key={i} question={faq.q} answer={faq.a} />
+                <div key={faq.q}>
+                  <FAQItem question={faq.q} answer={faq.a} />
+                </div>
               ))}
             </div>
 
@@ -1032,9 +1054,11 @@ export default function App() {
             </div>
 
             <ImageCard
-              src="/images/classic-car.png"
-              alt="Classic car serviced by MJN Automotive"
+              src="/images/classic-car-servicing-south-nowra.webp"
+              alt="Classic car serviced by MJN Automotive in South Nowra"
               label="South Nowra HQ"
+              width={1200}
+              height={800}
             />
           </div>
         </section>
@@ -1044,8 +1068,8 @@ export default function App() {
           <div className="mx-auto max-w-7xl">
             <SectionHeading
               eyebrow="Contact"
-              title="Booking & Enquiries"
-              text="Send a service enquiry and we'll get back to you promptly — or call us directly for a faster response."
+              title="Service Requests & Enquiries"
+              text="Send your service request and the workshop will contact you to confirm availability, timing and any required details."
             />
 
             <div className="mt-14 grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
@@ -1122,14 +1146,16 @@ export default function App() {
                     className="btn-base btn-yellow mt-8 w-full rounded-lg py-3.5 text-sm"
                   >
                     <Phone size={16} />
-                    Call Now — {phone}
+                    Call the Workshop - {phone}
                   </a>
                 </div>
 
                 <ImageCard
-                  src="/images/mustang-workshop.png"
-                  alt="MJN Automotive workshop"
+                  src="/images/mjn-automotive-workshop-interior.webp"
+                  alt="Mechanic servicing a vehicle at MJN Automotive"
                   label="South Nowra HQ"
+                  width={1000}
+                  height={774}
                 />
               </div>
             </div>
