@@ -11,6 +11,21 @@ const __dirname = path.dirname(__filename);
 const distPath = path.join(__dirname, 'dist');
 
 /* ── Middleware ─────────────────────────────────────── */
+app.set('trust proxy', true);
+
+app.use((req, res, next) => {
+  const host = req.headers.host || '';
+  const forwardedProto = req.get('x-forwarded-proto');
+  const isLocalhost = /^localhost(?::\d+)?$/.test(host) || /^127\.0\.0\.1(?::\d+)?$/.test(host);
+  const isSecure = req.secure || forwardedProto === 'https';
+
+  if (!isLocalhost && !isSecure) {
+    return res.redirect(301, `https://${host}${req.originalUrl}`);
+  }
+
+  return next();
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(distPath));
