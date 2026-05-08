@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 54">
+  <!-- Blue background -->
+  <rect width="220" height="54" rx="6" fill="#003087"/>
+  <!-- BURSON in white, AUTO PARTS smaller below -->
+  <text x="110" y="31" text-anchor="middle"
+        font-family="Arial Black, Impact, sans-serif" font-weight="900"
+        font-size="26" fill="#ffffff" letter-spacing="3">BURSON</text>
+  <text x="110" y="47" text-anchor="middle"
+        font-family="Arial, sans-serif" font-weight="700"
+        font-size="11" fill="#FFC72C" letter-spacing="4">AUTO PARTS</text>
+</svg>
